@@ -8,7 +8,7 @@ docker run -d ashwanthkumar/gocd-agent:latest
 In order to configure the agent for use in your cluster with other than default settings you can pass in the following environment variables
 
 | Name  |	Description |	Default value |
-| :---: | :---: | :---: |
+| --- | --- | --- |
 | GO_SERVER |	The host name or ip address of the server to connect to	| localhost |
 | GO_SERVER_PORT  |	The http port of the go server  |	8153  |
 | AGENT_MEM |	The -Xms value for the java vm	|  128m  |
@@ -65,6 +65,7 @@ Do be aware that mounting docker inside your container poses a large security ri
 In order to keep working copies over a restart and use ssh keys from the host machine you can mount the following directories
 
 | Directory |	Description |	Importance  |
+| --- | --- | --- |
 | /var/lib/go-agent/pipelines |	This directory holds the working copies for all pipelines that have run on this agent | You want to have this cleaned up regularly anyway, so no real need to mount it  |
 | /var/log/go-agent |	All output logs go here, but there also written to standard out in the container  |	Preferably collect logs from standard out |
 | /var/go/.ssh  |	The ssh keys to connect to version control systems like github and bitbucket  |	As it's better not to embed these keys in the container you likely need to mount this |
