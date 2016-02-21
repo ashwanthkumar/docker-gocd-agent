@@ -1,6 +1,6 @@
 FROM travix/base-debian-git-jre8:latest
 
-MAINTAINER Travix
+MAINTAINER Ashwanth Kumar <ashwanthkumar@googlemail.com>
 
 # build time environment variables
 ENV GO_VERSION=16.2.1-3027 \
@@ -30,6 +30,7 @@ ENV GO_SERVER=localhost \
     AGENT_MAX_MEM=256m \
     AGENT_KEY="" \
     AGENT_RESOURCES="" \
+    AGENT_GUID="" \
     AGENT_ENVIRONMENTS="" \
     AGENT_HOSTNAME="" \
     DOCKER_GID_ON_HOST=""
@@ -45,15 +46,18 @@ CMD groupmod -g ${GROUP_ID} ${GROUP_NAME}; \
     sed -i -e "s/GO_SERVER_PORT=8153/GO_SERVER_PORT=${GO_SERVER_PORT}/" /etc/default/go-agent; \
     if [ -n "$AGENT_KEY" ]; \
         then echo "agent.auto.register.key=$AGENT_KEY" > /var/lib/go-agent/config/autoregister.properties; \
-        if [ -n "$AGENT_RESOURCES" ]; \
-            then echo "agent.auto.register.resources=$AGENT_RESOURCES" >> /var/lib/go-agent/config/autoregister.properties; \
-        fi; \
-        if [ -n "$AGENT_ENVIRONMENTS" ]; \
-            then echo "agent.auto.register.environments=$AGENT_ENVIRONMENTS" >> /var/lib/go-agent/config/autoregister.properties; \
-        fi; \
-        if [ -n "$AGENT_HOSTNAME" ]; \
-            then echo "agent.auto.register.hostname=$AGENT_HOSTNAME" >> /var/lib/go-agent/config/autoregister.properties; \
-        fi; \
+    fi; \
+    if [ -n "$AGENT_RESOURCES" ]; \
+        then echo "agent.auto.register.resources=$AGENT_RESOURCES" >> /var/lib/go-agent/config/autoregister.properties; \
+    fi; \
+    if [ -n "$AGENT_ENVIRONMENTS" ]; \
+        then echo "agent.auto.register.environments=$AGENT_ENVIRONMENTS" >> /var/lib/go-agent/config/autoregister.properties; \
+    fi; \
+    if [ -n "$AGENT_HOSTNAME" ]; \
+        then echo "agent.auto.register.hostname=$AGENT_HOSTNAME" >> /var/lib/go-agent/config/autoregister.properties; \
+    fi; \
+    if [ -n "$AGENT_GUID" ]; \
+        then echo "$AGENT_GUID" > /var/lib/go-agent/config/guid.txt; \
     fi; \
     until curl -s -o /dev/null "http://${GO_SERVER}:${GO_SERVER_PORT}"; \
         do sleep 5; \
@@ -65,4 +69,3 @@ CMD groupmod -g ${GROUP_ID} ${GROUP_NAME}; \
     done; \
     ps aux; \
     /bin/su - ${USER_NAME} -c "exec tail -F /var/log/go-agent/*"
-
